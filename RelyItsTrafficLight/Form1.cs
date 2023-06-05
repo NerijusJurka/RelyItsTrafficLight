@@ -78,6 +78,7 @@ namespace RelyItsTrafficLight
             button1.TabIndex = 5;
             button1.Text = "Pedestrian Button";
             button1.UseVisualStyleBackColor = true;
+            button1.Click += Button1_Click;
             // 
             // redtextBox
             // 
@@ -213,10 +214,10 @@ namespace RelyItsTrafficLight
         private void Form1_Load(object sender, EventArgs e)
         {
             // Set default duration values
-            redtextBox.Text = "5000";
+            redtextBox.Text = "120000";
             yeltextBox.Text = "5000";
-            minGretextBox.Text = "1200";
-            MaxGretextBox.Text = "3600";
+            minGretextBox.Text = "120000";
+            MaxGretextBox.Text = "360000";
             yelRedtextBox.Text = "5000";
 
             // Create the initial instance of Stoplight
@@ -238,17 +239,19 @@ namespace RelyItsTrafficLight
             int maxGreDuration = int.Parse(MaxGretextBox.Text);
             int redYelDuration = int.Parse(yelRedtextBox.Text);
 
-            // Stop the existing stoplight if it's not null
             if (stoplight != null)
             {
                 stoplight.Stop();
             }
 
-            // Create a new instance of Stoplight with the updated duration values
             stoplight = new Stoplight(green, red, yellowRed, yellow, redDuration, yelDuration, minGreDuration, maxGreDuration, redYelDuration);
             stoplight.Start();
         }
-
+        private void Button1_Click(object sender, EventArgs e)
+        {
+            stoplight.ButtonClick();
+        }
+        //----------------------------------------------------
         private void Start_Click(object sender, EventArgs e)
         {
 
@@ -269,6 +272,6 @@ namespace RelyItsTrafficLight
 
         }
 
-
+        
     }
 }

@@ -57,7 +57,19 @@
         timer.Stop();
         timer.Dispose();
     }
+    public void ButtonClick()
+    {
+        if (isRedActive)
+        {
+            return;
+        }
+        else if (isGreenActive)
+        {
+            int remainingGreenDuration = Math.Min(maxGreenDuration - timer.Interval, 30 * 1000);
 
+            timer.Interval += remainingGreenDuration;
+        }
+    }
     private void Timer_Tick(object sender, EventArgs e)
     {
         if (isRedActive)
