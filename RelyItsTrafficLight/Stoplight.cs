@@ -1,134 +1,102 @@
-﻿
-
-public class Stoplight
+﻿public class Stoplight
 {
-    private System.Windows.Forms.Timer redTimer;
-    private System.Windows.Forms.Timer greenTimer;
-    private System.Windows.Forms.Timer yellowTimer;
-    private System.Windows.Forms.Timer yellowRedTimer;
+    private PictureBox greenLight;
+    private PictureBox redLight;
+    private PictureBox yellowRedLight;
+    private PictureBox yellowLight;
 
-    private int redDur;
-    private int yellowDur;
-    private int minGreenDur;
-    private int maxGreenDur;
-    private int redYellowDur;
+    private int redDuration;
+    private int yellowDuration;
+    private int minGreenDuration;
+    private int maxGreenDuration;
+    private int redYellowDuration;
 
-    public PictureBox RedPictureBox { get; private set; }
-    public PictureBox GreenPictureBox { get; private set; }
-    public PictureBox YellowPictureBox { get; private set; }
-    public PictureBox YellowRedPictureBox { get; private set; }
+    private System.Windows.Forms.Timer timer;
+
+    private bool isGreenActive;
+    private bool isRedActive;
+    private bool isYellowActive;
+    private bool isRedYellowActive;
 
     public Stoplight(PictureBox green, PictureBox red, PictureBox yellowRed, PictureBox yellow,
-    int redDuration, int yellowDuration, int minGreenDuration, int maxGreenDuration, int redYellowDuration)
+        int redDuration, int yellowDuration, int minGreenDuration, int maxGreenDuration, int redYellowDuration)
     {
-        GreenPictureBox = green;
-        RedPictureBox = red;
-        YellowRedPictureBox = yellowRed;
-        YellowPictureBox = yellow;
+        greenLight = green;
+        redLight = red;
+        yellowRedLight = yellowRed;
+        yellowLight = yellow;
 
-         redDur = redDuration;
-         yellowDur = yellowDuration;
-         minGreenDur = minGreenDuration;
-         maxGreenDur = maxGreenDuration;
-         redYellowDur = redYellowDuration;
+        this.redDuration = redDuration;
+        this.yellowDuration = yellowDuration;
+        this.minGreenDuration = minGreenDuration;
+        this.maxGreenDuration = maxGreenDuration;
+        this.redYellowDuration = redYellowDuration;
 
-        InitializeComponents();
-        InitializeTimers();
-    }
-
-    private void InitializeComponents()
-    {
-        RedPictureBox.Image = RelyItsTrafficLight.Properties.Resources.RedLight;
-        //RedPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-
-        GreenPictureBox.Image = RelyItsTrafficLight.Properties.Resources.GreenLight;
-        //GreenPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-
-        YellowPictureBox.Image = RelyItsTrafficLight.Properties.Resources.YellowLight;
-        //YellowPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-
-        YellowRedPictureBox.Image = RelyItsTrafficLight.Properties.Resources.RedYellowLight;
-        //YellowRedPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-    }
-
-    private void InitializeTimers()
-    {
-        redTimer = new System.Windows.Forms.Timer();
-        redTimer.Tick += OnRedTimerElapsed;
-
-        greenTimer = new System.Windows.Forms.Timer();
-        greenTimer.Tick += OnGreenTimerElapsed;
-
-        yellowTimer = new System.Windows.Forms.Timer();
-        yellowTimer.Tick += OnYellowTimerElapsed;
-
-        yellowRedTimer = new System.Windows.Forms.Timer();
-        yellowRedTimer.Tick += OnYellowRedTimerElapsed;
+        timer = new System.Windows.Forms.Timer();
+        timer.Tick += Timer_Tick;
     }
 
     public void Start()
     {
-        RedPictureBox.Visible = true;
-        GreenPictureBox.Visible = false;
-        YellowPictureBox.Visible = false;
-        YellowRedPictureBox.Visible = false;
+        redLight.Visible = true;
+        greenLight.Visible = false;
+        yellowRedLight.Visible = false;
+        yellowLight.Visible = false;
 
-        redTimer.Interval = 1;
-        redTimer.Start();
+        isGreenActive = false;
+        isRedActive = true;
+        isYellowActive = false;
+        isRedYellowActive = false;
+
+        timer.Interval = redDuration;
+        timer.Start();
     }
 
-    private void OnRedTimerElapsed(object sender, EventArgs e)
+    public void Stop()
     {
-        RedPictureBox.Visible = true;
-        GreenPictureBox.Visible = false;
-        YellowPictureBox.Visible = false;
-        YellowRedPictureBox.Visible = false;
-
-        redTimer.Stop();
-        yellowRedTimer.Interval = yellowDur;
-        yellowRedTimer.Start();
+        timer.Stop();
+        timer.Dispose();
     }
 
-    private void OnYellowRedTimerElapsed(object sender, EventArgs e)
+    private void Timer_Tick(object sender, EventArgs e)
     {
-        RedPictureBox.Visible = false;
-        GreenPictureBox.Visible = false;
-        YellowPictureBox.Visible = false;
-        YellowRedPictureBox.Visible = true;
+        if (isRedActive)
+        {
+            redLight.Visible = false;
+            yellowRedLight.Visible = true;
+            isRedActive = false;
+            isRedYellowActive = true;
 
-        yellowRedTimer.Stop();
-        greenTimer.Interval = redYellowDur;
-        greenTimer.Start();
-    }
+            timer.Interval = redYellowDuration;
+        }
+        else if (isRedYellowActive)
+        {
+            yellowRedLight.Visible = false;
+            greenLight.Visible = true;
+            isRedYellowActive = false;
+            isGreenActive = true;
 
-    private void OnGreenTimerElapsed(object sender, EventArgs e)
-    {
-        RedPictureBox.Visible = false;
-        GreenPictureBox.Visible = true;
-        YellowPictureBox.Visible = false;
-        YellowRedPictureBox.Visible = false;
+            Random random = new Random();
+            int randomGreenDuration = random.Next(minGreenDuration, maxGreenDuration + 1);
+            timer.Interval = randomGreenDuration;
+        }
+        else if (isGreenActive)
+        {
+            greenLight.Visible = false;
+            yellowLight.Visible = true;
+            isGreenActive = false;
+            isYellowActive = true;
 
-        greenTimer.Stop();
-        yellowTimer.Interval = GetRandomDuration(minGreenDur, maxGreenDur);
-        yellowTimer.Start();
-    }
+            timer.Interval = yellowDuration;
+        }
+        else if (isYellowActive)
+        {
+            yellowLight.Visible = false;
+            redLight.Visible = true;
+            isYellowActive = false;
+            isRedActive = true;
 
-
-    private void OnYellowTimerElapsed(object sender, EventArgs e)
-    {
-        RedPictureBox.Visible = false;
-        GreenPictureBox.Visible = false;
-        YellowPictureBox.Visible = true;
-        YellowRedPictureBox.Visible = false;
-
-        yellowTimer.Stop();
-        redTimer.Interval = redDur;
-        redTimer.Start();
-    }
-
-    private static int GetRandomDuration(int minDuration, int maxDuration)
-    {
-        Random random = new Random();
-        return random.Next(minDuration, maxDuration + 1);
+            timer.Interval = redDuration;
+        }
     }
 }

@@ -2,6 +2,7 @@ namespace RelyItsTrafficLight
 {
     public partial class Form1 : Form
     {
+        private Stoplight stoplight;
         public Form1()
         {
             InitializeComponent();
@@ -24,7 +25,7 @@ namespace RelyItsTrafficLight
             label4 = new Label();
             yelRedtextBox = new TextBox();
             label5 = new Label();
-            button2 = new Button();
+            Apply = new Button();
             label6 = new Label();
             ((System.ComponentModel.ISupportInitialize)green).BeginInit();
             ((System.ComponentModel.ISupportInitialize)red).BeginInit();
@@ -160,14 +161,15 @@ namespace RelyItsTrafficLight
             label5.TabIndex = 15;
             label5.Text = "RedYellowLight Duration";
             // 
-            // button2
+            // Apply
             // 
-            button2.Location = new Point(344, 217);
-            button2.Name = "button2";
-            button2.Size = new Size(165, 54);
-            button2.TabIndex = 16;
-            button2.Text = "Apply";
-            button2.UseVisualStyleBackColor = true;
+            Apply.Location = new Point(344, 217);
+            Apply.Name = "Apply";
+            Apply.Size = new Size(165, 54);
+            Apply.TabIndex = 16;
+            Apply.Text = "Apply";
+            Apply.UseVisualStyleBackColor = true;
+            Apply.Click += Button2_Click;
             // 
             // label6
             // 
@@ -182,7 +184,7 @@ namespace RelyItsTrafficLight
             // 
             ClientSize = new Size(653, 610);
             Controls.Add(label6);
-            Controls.Add(button2);
+            Controls.Add(Apply);
             Controls.Add(label5);
             Controls.Add(yelRedtextBox);
             Controls.Add(label4);
@@ -210,32 +212,46 @@ namespace RelyItsTrafficLight
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            // Set default duration values
             redtextBox.Text = "5000";
             yeltextBox.Text = "5000";
             minGretextBox.Text = "1200";
             MaxGretextBox.Text = "3600";
             yelRedtextBox.Text = "5000";
 
+            // Create the initial instance of Stoplight
             int redDuration = int.Parse(redtextBox.Text);
             int yelDuration = int.Parse(yeltextBox.Text);
             int minGreDuration = int.Parse(minGretextBox.Text);
             int maxGreDuration = int.Parse(MaxGretextBox.Text);
             int redYelDuration = int.Parse(yelRedtextBox.Text);
 
-            Stoplight stoplight = new Stoplight(green, red, yellowRed, yellow, redDuration, yelDuration, minGreDuration, maxGreDuration, redYelDuration);
+            stoplight = new Stoplight(green, red, yellowRed, yellow, redDuration, yelDuration, minGreDuration, maxGreDuration, redYelDuration);
+            stoplight.Start();
+        }
+        private void Button2_Click(object sender, EventArgs e)
+        {
+            // Update the duration values
+            int redDuration = int.Parse(redtextBox.Text);
+            int yelDuration = int.Parse(yeltextBox.Text);
+            int minGreDuration = int.Parse(minGretextBox.Text);
+            int maxGreDuration = int.Parse(MaxGretextBox.Text);
+            int redYelDuration = int.Parse(yelRedtextBox.Text);
+
+            // Stop the existing stoplight if it's not null
+            if (stoplight != null)
+            {
+                stoplight.Stop();
+            }
+
+            // Create a new instance of Stoplight with the updated duration values
+            stoplight = new Stoplight(green, red, yellowRed, yellow, redDuration, yelDuration, minGreDuration, maxGreDuration, redYelDuration);
             stoplight.Start();
         }
 
         private void Start_Click(object sender, EventArgs e)
         {
-            int redDuration = int.Parse(redtextBox.Text);
-            int yelDuration = int.Parse(yeltextBox.Text);
-            int minGreDuration = int.Parse(minGretextBox.Text);
-            int maxGreDuration = int.Parse(MaxGretextBox.Text);
-            int redYelDuration = int.Parse(yelRedtextBox.Text);
 
-            Stoplight stoplight = new Stoplight(green, red, yellowRed, yellow, redDuration, yelDuration, minGreDuration, maxGreDuration, redYelDuration);
-            stoplight.Start();
         }
 
         private void Yellow_Click(object sender, EventArgs e)
@@ -252,5 +268,7 @@ namespace RelyItsTrafficLight
         {
 
         }
+
+
     }
 }
