@@ -1,8 +1,4 @@
-﻿using System;
-using System.Diagnostics.Metrics;
-using System.Numerics;
-using System.Windows.Forms;
-using static System.Windows.Forms.AxHost;
+﻿
 
 public class Stoplight
 {
@@ -11,17 +7,30 @@ public class Stoplight
     private System.Windows.Forms.Timer yellowTimer;
     private System.Windows.Forms.Timer yellowRedTimer;
 
+    private int redDur;
+    private int yellowDur;
+    private int minGreenDur;
+    private int maxGreenDur;
+    private int redYellowDur;
+
     public PictureBox RedPictureBox { get; private set; }
     public PictureBox GreenPictureBox { get; private set; }
     public PictureBox YellowPictureBox { get; private set; }
     public PictureBox YellowRedPictureBox { get; private set; }
 
-    public Stoplight(PictureBox green, PictureBox red, PictureBox yellowRed, PictureBox yellow)
+    public Stoplight(PictureBox green, PictureBox red, PictureBox yellowRed, PictureBox yellow,
+    int redDuration, int yellowDuration, int minGreenDuration, int maxGreenDuration, int redYellowDuration)
     {
         GreenPictureBox = green;
         RedPictureBox = red;
         YellowRedPictureBox = yellowRed;
         YellowPictureBox = yellow;
+
+         redDur = redDuration;
+         yellowDur = yellowDuration;
+         minGreenDur = minGreenDuration;
+         maxGreenDur = maxGreenDuration;
+         redYellowDur = redYellowDuration;
 
         InitializeComponents();
         InitializeTimers();
@@ -76,7 +85,7 @@ public class Stoplight
         YellowRedPictureBox.Visible = false;
 
         redTimer.Stop();
-        yellowRedTimer.Interval = 5000;
+        yellowRedTimer.Interval = yellowDur;
         yellowRedTimer.Start();
     }
 
@@ -88,7 +97,7 @@ public class Stoplight
         YellowRedPictureBox.Visible = true;
 
         yellowRedTimer.Stop();
-        greenTimer.Interval = 5000;
+        greenTimer.Interval = redYellowDur;
         greenTimer.Start();
     }
 
@@ -100,7 +109,7 @@ public class Stoplight
         YellowRedPictureBox.Visible = false;
 
         greenTimer.Stop();
-        yellowTimer.Interval = GetRandomGreenLightDuration();
+        yellowTimer.Interval = GetRandomDuration(minGreenDur, maxGreenDur);
         yellowTimer.Start();
     }
 
@@ -113,13 +122,13 @@ public class Stoplight
         YellowRedPictureBox.Visible = false;
 
         yellowTimer.Stop();
-        redTimer.Interval = 5000;
+        redTimer.Interval = redDur;
         redTimer.Start();
     }
 
-    private static int GetRandomGreenLightDuration()
+    private static int GetRandomDuration(int minDuration, int maxDuration)
     {
         Random random = new Random();
-        return random.Next(120000, 360001); // Random duration between 2 and 6 minutes
+        return random.Next(minDuration, maxDuration + 1);
     }
 }
