@@ -28,7 +28,7 @@
         private Label label4;
         private TextBox yelRedtextBox;
         private Label label5;
-        private Button Apply;
         private Label label6;
+        private Button Apply;
     }
 }

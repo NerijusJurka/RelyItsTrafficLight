@@ -65,10 +65,12 @@
         }
         else if (isGreenActive)
         {
-            int remainingGreenDuration = Math.Min(maxGreenDuration - timer.Interval, 30 * 1000);
+            int remainingGreenDuration = Math.Max(maxGreenDuration - timer.Interval, 0);
 
-            timer.Interval += remainingGreenDuration;
+            timer.Interval = remainingGreenDuration < 30 * 1000 ? remainingGreenDuration : maxGreenDuration;
         }
+
+        greenLight.Visible = true;
     }
     private void Timer_Tick(object sender, EventArgs e)
     {
@@ -100,6 +102,17 @@
             isYellowActive = true;
 
             timer.Interval = yellowDuration;
+
+            if (timer.Interval >= maxGreenDuration)
+            {
+                yellowLight.Visible = false;
+                redLight.Visible = true;
+                isYellowActive = false;
+                isRedActive = true;
+
+                int remainingRedDuration = timer.Interval - maxGreenDuration;
+                timer.Interval = remainingRedDuration < redDuration ? remainingRedDuration : redDuration;
+            }
         }
         else if (isYellowActive)
         {
@@ -110,5 +123,26 @@
 
             timer.Interval = redDuration;
         }
+    }
+    public bool IsRedLightVisible => redLight.Visible;
+    public bool IsGreenLightVisible => greenLight.Visible;
+    public bool IsYellowRedLightVisible => yellowRedLight.Visible;
+    public bool IsYellowLightVisible => yellowLight.Visible;
+    public bool IsRedActive => isRedActive;
+    public void SetInternalState(bool green, bool red, bool yellowRed, bool yellow)
+    {
+        isGreenActive = green;
+        isRedActive = red;
+        isYellowActive = yellow;
+        isRedYellowActive = yellowRed;
+    }
+    public int GetTimerInterval()
+    {
+        return timer.Interval;
+    }
+    public int MaxGreenDuration
+    {
+        get { return maxGreenDuration; }
+        set { maxGreenDuration = value; }
     }
 }

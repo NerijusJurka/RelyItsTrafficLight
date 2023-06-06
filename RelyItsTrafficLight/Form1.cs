@@ -25,8 +25,8 @@ namespace RelyItsTrafficLight
             label4 = new Label();
             yelRedtextBox = new TextBox();
             label5 = new Label();
-            Apply = new Button();
             label6 = new Label();
+            Apply = new Button();
             ((System.ComponentModel.ISupportInitialize)green).BeginInit();
             ((System.ComponentModel.ISupportInitialize)red).BeginInit();
             ((System.ComponentModel.ISupportInitialize)yellowRed).BeginInit();
@@ -162,16 +162,6 @@ namespace RelyItsTrafficLight
             label5.TabIndex = 15;
             label5.Text = "RedYellowLight Duration";
             // 
-            // Apply
-            // 
-            Apply.Location = new Point(344, 217);
-            Apply.Name = "Apply";
-            Apply.Size = new Size(165, 54);
-            Apply.TabIndex = 16;
-            Apply.Text = "Apply";
-            Apply.UseVisualStyleBackColor = true;
-            Apply.Click += Button2_Click;
-            // 
             // label6
             // 
             label6.AutoSize = true;
@@ -181,11 +171,21 @@ namespace RelyItsTrafficLight
             label6.TabIndex = 17;
             label6.Text = "Time Settings 1000 = 1 sec";
             // 
+            // Apply
+            // 
+            Apply.Location = new Point(344, 217);
+            Apply.Name = "Apply";
+            Apply.Size = new Size(165, 54);
+            Apply.TabIndex = 18;
+            Apply.Text = "Apply";
+            Apply.UseVisualStyleBackColor = true;
+            Apply.Click += Apply_Click;
+            // 
             // Form1
             // 
             ClientSize = new Size(653, 610);
-            Controls.Add(label6);
             Controls.Add(Apply);
+            Controls.Add(label6);
             Controls.Add(label5);
             Controls.Add(yelRedtextBox);
             Controls.Add(label4);
@@ -230,7 +230,7 @@ namespace RelyItsTrafficLight
             stoplight = new Stoplight(green, red, yellowRed, yellow, redDuration, yelDuration, minGreDuration, maxGreDuration, redYelDuration);
             stoplight.Start();
         }
-        private void Button2_Click(object sender, EventArgs e)
+        private void Apply_Click(object sender, EventArgs e)
         {
             // Update the duration values
             int redDuration = int.Parse(redtextBox.Text);
