@@ -18,6 +18,8 @@
     private bool isYellowActive;
     private bool isRedYellowActive;
 
+    private int fixedGreenDuration;
+
     public Stoplight(PictureBox green, PictureBox red, PictureBox yellowRed, PictureBox yellow,
         int redDuration, int yellowDuration, int minGreenDuration, int maxGreenDuration, int redYellowDuration)
     {
@@ -34,6 +36,9 @@
 
         timer = new System.Windows.Forms.Timer();
         timer.Tick += Timer_Tick;
+
+        Random random = new Random();
+        fixedGreenDuration = random.Next(minGreenDuration, maxGreenDuration + 1);
     }
 
     public void Start()
@@ -57,6 +62,7 @@
         timer.Stop();
         timer.Dispose();
     }
+
     public void ButtonClick()
     {
         if (isRedActive)
@@ -72,6 +78,7 @@
 
         greenLight.Visible = true;
     }
+
     private void Timer_Tick(object sender, EventArgs e)
     {
         if (isRedActive)
@@ -90,9 +97,7 @@
             isRedYellowActive = false;
             isGreenActive = true;
 
-            Random random = new Random();
-            int randomGreenDuration = random.Next(minGreenDuration, maxGreenDuration + 1);
-            timer.Interval = randomGreenDuration;
+            timer.Interval = fixedGreenDuration;
         }
         else if (isGreenActive)
         {
@@ -124,11 +129,13 @@
             timer.Interval = redDuration;
         }
     }
+
     public bool IsRedLightVisible => redLight.Visible;
     public bool IsGreenLightVisible => greenLight.Visible;
     public bool IsYellowRedLightVisible => yellowRedLight.Visible;
     public bool IsYellowLightVisible => yellowLight.Visible;
     public bool IsRedActive => isRedActive;
+
     public void SetInternalState(bool green, bool red, bool yellowRed, bool yellow)
     {
         isGreenActive = green;
@@ -136,10 +143,12 @@
         isYellowActive = yellow;
         isRedYellowActive = yellowRed;
     }
+
     public int GetTimerInterval()
     {
         return timer.Interval;
     }
+
     public int MaxGreenDuration
     {
         get { return maxGreenDuration; }
