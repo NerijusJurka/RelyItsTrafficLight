@@ -1,4 +1,7 @@
-﻿public class Stoplight
+﻿using System.Numerics;
+using System.Windows.Forms;
+
+public class Stoplight
 {
     private PictureBox greenLight;
     private PictureBox redLight;
@@ -17,6 +20,10 @@
     private bool isRedActive;
     private bool isYellowActive;
     private bool isRedYellowActive;
+
+    public int RedYellowDuration => redYellowDuration;
+    public bool IsRedYellowActive => isRedYellowActive;
+    public bool IsYellowActive => isYellowActive;
 
     private int fixedGreenDuration;
 
@@ -39,6 +46,7 @@
 
         Random random = new Random();
         fixedGreenDuration = random.Next(minGreenDuration, maxGreenDuration + 1);
+        timer.Interval = fixedGreenDuration > 0 ? fixedGreenDuration : 1;
     }
 
     public void Start()
@@ -53,7 +61,7 @@
         isYellowActive = false;
         isRedYellowActive = false;
 
-        timer.Interval = redDuration;
+        timer.Interval = fixedGreenDuration;
         timer.Start();
     }
 
@@ -67,19 +75,38 @@
     {
         if (isRedActive)
         {
-            return;
+            greenLight.Visible = false;
+            yellowRedLight.Visible = false;
+            yellowLight.Visible = false;
+            isRedActive = false;
+            isRedYellowActive = true;
+            timer.Interval = redYellowDuration;
+            timer.Start();
         }
         else if (isGreenActive)
         {
             int remainingGreenDuration = Math.Max(maxGreenDuration - timer.Interval, 0);
+            int additionalGreenDuration = Math.Min(remainingGreenDuration, 30000);
+            int newGreenDuration = fixedGreenDuration + additionalGreenDuration;
 
-            timer.Interval = remainingGreenDuration < 30 * 1000 ? remainingGreenDuration : maxGreenDuration;
+            if (newGreenDuration > maxGreenDuration)
+            {
+                newGreenDuration = maxGreenDuration;
+            }
+
+            timer.Interval = newGreenDuration;
         }
+        else if (isYellowActive)
+        {
+            yellowLight.Visible = false;
+            redLight.Visible = true;
+            isYellowActive = false;
+            isRedActive = true;
 
-        greenLight.Visible = true;
+            timer.Interval = redDuration;
+        }
     }
-
-    private void Timer_Tick(object sender, EventArgs e)
+    public void Timer_Tick(object sender, EventArgs e)
     {
         if (isRedActive)
         {
@@ -142,8 +169,17 @@
         isRedActive = red;
         isYellowActive = yellow;
         isRedYellowActive = yellowRed;
-    }
+        if (isGreenActive)
+        {
+            timer.Interval = fixedGreenDuration;
+        }
 
+    }
+    public int TimerInterval
+    {
+        get { return timer.Interval; }
+        set { timer.Interval = value; }
+    }
     public int GetTimerInterval()
     {
         return timer.Interval;
